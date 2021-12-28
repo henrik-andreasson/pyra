@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+
+
+  {% if accesses %}
+  <table class="table table-hover">
+    <tr>
+      <td>{{_('Inventory id')}}</td>
+      <td>{{_('User')}}</td>
+      <td>{{_('Role')}}</td>
+      <td>{{_('Actions')}}</td>
+    </tr>
+
+    {% for a in accesses %}
+
+      <tr>
+        <td>
+              {{ a.inventory_id() }}
+        </td>
+        <td>
+                {{ a.user.username }}
+        </td>
+        <td>
+                {{ a.role.name }}
+        </td>
+        <td>
+          <A HREF="{{url_for('main.access_edit', access=a.id)}}"> {{ _('Edit') }}</A> <br/>
+          <A HREF="{{url_for('main.access_list', access=a.id)}}"> {{ _('List') }}</A>
+        </td>
+
+      </tr>
+    {% endfor %}
+
+
+    </table>
+
+
+    <nav aria-label="...">
+        <ul class="pager">
+            <li class="previous{% if not prev_url %} disabled{% endif %}">
+                <a href="{{ prev_url or '#' }}">
+                    <span aria-hidden="true">&larr;</span> {{ _('Previous page') }}
+                </a>
+            </li>
+            <li class="next{% if not next_url %} disabled{% endif %}">
+                <a href="{{ next_url or '#' }}">
+                    {{ _('Next page') }} <span aria-hidden="true">&rarr;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+  {% endif %}
+
+  {% if form %}
+      {{ wtf.quick_form(form) }}
+  {% endif %}
+{% endblock %}

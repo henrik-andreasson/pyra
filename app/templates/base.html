@@ -1,0 +1,104 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block title %}
+    {% if title %}{{ title }} - {% else %}{{ _('Welcome to Inventorpy') }}{% endif %}
+{% endblock %}
+
+{% block navbar %}
+
+<!-- navbar-fixed-top dont work ... -->
+<nav class="navbar navbar-inverse ">
+ <div class="container-fluid">
+   <div class="navbar-header">
+     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+       <span class="icon-bar"></span>
+       <span class="icon-bar"></span>
+       <span class="icon-bar"></span>
+     </button>
+     <a class="navbar-brand" href="/">PyRA</a>
+   </div>
+   {% if current_user.is_authenticated %}
+  <div class="collapse navbar-collapse" id="myNavbar">
+   <ul class="nav navbar-nav">
+     <li class="dropdown">
+         <a class="dropdown-toggle" data-toggle="dropdown" href="#">Service
+         <span class="caret"></span></a>
+         <ul class="dropdown-menu">
+           <li class="nav-item"><a href="{{ url_for('main.service_list') }}">{{ _('List Service') }}</a></li>
+           <li class="nav-item"><a href="{{ url_for('main.service_add') }}">{{ _('Add Service') }}</a></li>
+         </ul>
+     </li>
+     <li class="dropdown">
+         <a class="dropdown-toggle" data-toggle="dropdown" href="#">Location
+         <span class="caret"></span></a>
+         <ul class="dropdown-menu">
+           <li class="nav-item"><a href="{{ url_for('main.location_list') }}">{{ _('List Location') }}</a></li>
+           <li class="nav-item"><a href="{{ url_for('main.location_add') }}">{{ _('Add Location') }}</a></li>
+         </ul>
+     </li>
+     <li class="dropdown">
+         <a class="dropdown-toggle" data-toggle="dropdown" href="#">Role
+         <span class="caret"></span></a>
+         <ul class="dropdown-menu">
+           <li class="nav-item"><a href="{{ url_for('main.role_list') }}">{{ _('List Roles') }}</a></li>
+           <li class="nav-item"><a href="{{ url_for('main.role_add') }}">{{ _('Add Role') }}</a></li>
+         </ul>
+     </li>
+     <li class="dropdown">
+         <a class="dropdown-toggle" data-toggle="dropdown" href="#">Access
+         <span class="caret"></span></a>
+         <ul class="dropdown-menu">
+           <li class="nav-item"><a href="{{ url_for('main.access_list') }}">{{ _('List Access') }}</a></li>
+           <li class="nav-item"><a href="{{ url_for('main.access_add') }}">{{ _('Add Access') }}</a></li>
+         </ul>
+     </li>
+
+     <li class="dropdown">
+         <a class="dropdown-toggle" data-toggle="dropdown" href="#">Resource
+         <span class="caret"></span></a>
+         <ul class="dropdown-menu">
+           <li class="nav-item"><a href="{{ url_for('main.resource_list') }}">{{ _('Resource List') }}</a></li>
+           <li class="nav-item"><a href="{{ url_for('main.resource_add') }}">{{ _('Resource Add') }}</a></li>
+         </ul>
+     </li>
+
+     <li class="nav-item"><a href="{{ url_for('main.updates_list') }}">{{ _('Pending Updates') }}</a></li>
+     <li class="nav-item"><a href="{{ url_for('main.logs_list') }}">{{ _('Logs') }}</a></li>
+   </ul>
+   {% endif %}
+
+   <ul class="nav navbar-nav navbar-right">
+       {% if current_user.is_anonymous %}
+       <li class="nav-item"><a href="{{ url_for('auth.login') }}">{{ _('Login') }}</a></li>
+       {% else %}
+       <li class="nav-item"><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Profile') }}</a></li>
+       <li class="nav-item"><a href="{{ url_for('auth.logout') }}">{{ _('Logout') }}</a></li>
+       {% endif %}
+   </ul>
+
+ </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid" style="margin-left:5%;margin-right:5%;margin-top:70px">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <h1> {% if title %} {{ title }} {% else %}{{ _('Welcome to Inventorpy') }}{% endif %}</h1>
+        {# application content needs to be provided in the app_content block #}
+        {% block app_content %}{% endblock %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+
+    {{ moment.include_moment() }}
+    {{ moment.lang(g.locale) }}
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+{% endblock %}

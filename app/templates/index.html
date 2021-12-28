@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6">
+
+    {% if roles %}
+      <div class="list-group">
+        <a href="{{ url_for('main.role_list')}}" class="list-group-item">
+          <h4 class="list-group-item-heading">{{_('Role')}}</h4>
+        </a>
+        {% for r in roles %}
+          <a href="{{ url_for('main.role_edit', role=r.id) }}" class="list-group-item">
+            {{r.name}}
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if accesses %}
+      <div class="list-group">
+        <a href="{{ url_for('main.access_list')}}" class="list-group-item">
+          <h4 class="list-group-item-heading">{{_('Access')}}</h4>
+        </a>
+        {% for a in accesses %}
+          <a href="{{ url_for('main.access_edit', access=a.id) }}" class="list-group-item">
+            {{a.user.username}} - {{a.role.name}} - {{a.start}} - {{a.stop}}
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if locations %}
+      <div class="list-group">
+        <a href="{{ url_for('main.location_list')}}" class="list-group-item">
+          <h4 class="list-group-item-heading">{{_('Locations')}}</h4>
+        </a>
+        {% for l in locations %}
+          <a href="{{ url_for('main.location_edit', id=l.id) }}" class="list-group-item">
+            {{l.place}} - {{l.facillity}} - {{l.area}} - {{l.position}} - {{l.type}}
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+
+
+    {% if services %}
+      <div class="list-group">
+        <a href="{{ url_for('main.service_list')}}" class="list-group-item">
+          <h4 class="list-group-item-heading">{{_('Services')}}</h4>
+        </a>
+        {% for serv in services %}
+          <a href="{{ url_for('main.service_edit', server=serv.id) }}" class="list-group-item">
+            {{serv.name}}
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if racks %}
+
+    <div class="list-group">
+        <a href="{{ url_for('main.rack_add')}}" class="list-group-item">
+          <h4 class="list-group-item-heading">{{_('Rack')}}</h4>
+          </a>
+        {% for r in racks %}
+          <A HREF="{{url_for('main.rack_edit', rack=r.id)}}" class="list-group-item">
+                    {{ r.name }} - {{ r.location.longName() }}
+          </A>
+        {% endfor %}
+
+    </div>
+    {% endif %}
+
+
+  </div>
+  <div class="col-sm-6">
+
+    {% if resources %}
+      <div class="list-group">
+        <a href="{{ url_for('main.resource_list')}}" class="list-group-item">
+          <h4 class="list-group-item-heading">{{_('Resource')}}</h4>
+        </a>
+        {% for r in resources %}
+          <a href="{{ url_for('main.resource_edit', resource=r.id) }}" class="list-group-item">
+            {{r.name}}
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+  </div>
+
+
+{% endblock %}

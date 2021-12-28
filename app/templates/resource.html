@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+
+{% if resources %}
+
+  {% if order == "desc" %}
+    {% set order %}asc{% endset %}
+  {% else %}
+    {% set order %}desc{% endset %}
+  {% endif %}
+
+<table class="table table-hover">
+    <tr>
+      <td><A HREF="{{url_for('main.resource_list', sort='id',          order=order)}}">{{_('Inventory id')}}</td>
+      <td><A HREF="{{url_for('main.resource_list', sort='name',        order=order)}}">{{_('Name')}}        </A></td>
+      <td><A HREF="{{url_for('main.resource_list', sort='service_id',  order=order)}}">{{_('Service')}}     </A></td>
+      <td><A HREF="{{url_for('main.resource_list', sort='comment',  order=order)}}">{{_('Comment')}}     </A></td>
+    </tr>
+
+    {% for r in resources %}
+
+      <tr>
+        <td>   <A HREF="{{url_for('main.resource_edit', resource=r.id)}}"> {{ r.inventory_id() }} </A> </td>
+        <td>  {{ r.name }}            </td>
+        <td>  {{ r.service.name }}    </td>
+        <td>  {{ r.comment }}         </td>
+
+      </tr>
+    {% endfor %}
+
+    </table>
+
+    <nav aria-label="...">
+        <ul class="pager">
+            <li class="previous{% if not prev_url %} disabled{% endif %}">
+                <a href="{{ prev_url or '#' }}">
+                    <span aria-hidden="true">&larr;</span> {{ _('Previous page') }}
+                </a>
+            </li>
+            <li class="next{% if not next_url %} disabled{% endif %}">
+                <a href="{{ next_url or '#' }}">
+                    {{ _('Next page') }} <span aria-hidden="true">&rarr;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+{% endif %}
+
+{% if form %}
+  {{ wtf.quick_form(form) }}
+{% endif %}
+
+
+{% endblock %}
