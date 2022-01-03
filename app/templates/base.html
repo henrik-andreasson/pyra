@@ -21,6 +21,17 @@
   <div class="collapse navbar-collapse" id="myNavbar">
    <ul class="nav navbar-nav">
      <li class="dropdown">
+         <a class="dropdown-toggle" data-toggle="dropdown" href="#">User
+         <span class="caret"></span></a>
+         <ul class="dropdown-menu">
+           <li class="nav-item"><a href="{{ url_for('main.user_list') }}">{{ _('List Users') }}</a></li>
+           <li class="nav-item"><a href="{{ url_for('auth.register') }}">{{ _('Add User') }}</a></li>
+           <li class="nav-item"><a href="{{ url_for('auth.user_set_password') }}">{{ _('Set Users Password') }}</a></li>
+           <li class="nav-item"><a href="{{ url_for('auth.user_update') }}">{{ _('Update User') }}</a></li>
+         </ul>
+     </li>
+
+     <li class="dropdown">
          <a class="dropdown-toggle" data-toggle="dropdown" href="#">Service
          <span class="caret"></span></a>
          <ul class="dropdown-menu">

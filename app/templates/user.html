@@ -3,17 +3,38 @@
 {% block app_content %}
     <table class="table table-hover">
         <tr>
-            <td width="256px"><img src="{{ user.avatar(256) }}"></td>
+            <td width="120px"><img src="{{ user.avatar(120) }}"></td>
             <td>
                 <h1>{{ _('User') }}: {{ user.username }}</h1>
                 {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
+            </td>
+          </tr>
+          <tr>
+              <td>{{ _('Works at:')}}</td>
+              <td>
+                {% for service in services %}
+                  {% for su in service.users %}
+                    {% if su.username == user.username %}
+                      {{ service.name }}
+                    {% endif %}
+                  {% endfor %}
+                {% endfor %}
+              </td>
+            </tr>
+            <tr>
+                <td>  {{ _('Email')}} </td> <td>  {{ user.email}} </td>
+              </tr>
+              <tr>
 
-                <h2>{{ _('Works at:')}}</h2>
-                {{ user.service.name }}
+                <td>  {{ _('Last seen') }} </td>                <td>  {{ user.last_seen }} </td>
+              </tr>
+              <tr>
+                <td>
+
                 {% if user == current_user %}
                   <p><a href="{{ url_for('main.edit_profile') }}">{{ _('Edit your profile') }}</a></p>
                 {% endif %}
-            </td>
-        </tr>
+                </td>
+              </tr>
     </table>
 {% endblock %}

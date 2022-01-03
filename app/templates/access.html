@@ -10,6 +10,7 @@
       <td>{{_('Inventory id')}}</td>
       <td>{{_('User')}}</td>
       <td>{{_('Role')}}</td>
+      <td>{{_('Status')}}</td>
       <td>{{_('Actions')}}</td>
     </tr>
 
@@ -26,7 +27,16 @@
                 {{ a.role.name }}
         </td>
         <td>
+                {{ a.status }}
+        </td>
+        <td>
           <A HREF="{{url_for('main.access_edit', access=a.id)}}"> {{ _('Edit') }}</A> <br/>
+          {% if a.status == "requested" %}
+            <A HREF="{{url_for('main.access_approve', access=a.id)}}"> {{ _('Approve') }}</A> <br/>
+          {% endif %}
+          {% if a.status == "approved" %}
+          <A HREF="{{url_for('main.access_implement', access=a.id)}}"> {{ _('Implement') }}</A> <br/>
+          {% endif %}
           <A HREF="{{url_for('main.access_list', access=a.id)}}"> {{ _('List') }}</A>
         </td>
 

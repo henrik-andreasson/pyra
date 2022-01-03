@@ -16,6 +16,8 @@
       <td><A HREF="{{url_for('main.resource_list', sort='id',          order=order)}}">{{_('Inventory id')}}</td>
       <td><A HREF="{{url_for('main.resource_list', sort='name',        order=order)}}">{{_('Name')}}        </A></td>
       <td><A HREF="{{url_for('main.resource_list', sort='service_id',  order=order)}}">{{_('Service')}}     </A></td>
+      <td><A HREF="{{url_for('main.resource_list', sort='environment', order=order)}}">{{_('Environment')}}     </A></td>
+      <td><A HREF="{{url_for('main.resource_list', sort='external_id', order=order)}}">{{_('External ID')}}     </A></td>
       <td><A HREF="{{url_for('main.resource_list', sort='comment',  order=order)}}">{{_('Comment')}}     </A></td>
     </tr>
 
@@ -25,6 +27,8 @@
         <td>   <A HREF="{{url_for('main.resource_edit', resource=r.id)}}"> {{ r.inventory_id() }} </A> </td>
         <td>  {{ r.name }}            </td>
         <td>  {{ r.service.name }}    </td>
+        <td>  {{ r.external_id }}     </td>
+        <td>  {{ r.environment }}     </td>
         <td>  {{ r.comment }}         </td>
 
       </tr>

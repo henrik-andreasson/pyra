@@ -10,15 +10,18 @@
     <tr>
       <td>{{_('Inventory id')}}</td>
       <td>{{_('Name')}}</td>
+      <td>{{_('Comment')}}</td>
+      <td>{{_('Action')}}</td>
     </tr>
 
     {% for r in roles %}
       <tr>
         <td>  {{ r.inventory_id() }} </td>
+        <td>  {{ r.name }}           </td>
+        <td>  {{ r.comment }}        </td>
         <td>
-            <A HREF="{{url_for('main.role_edit', role=r.id)}}">
-              {{ r.name }}
-            </A>
+          <A HREF="{{url_for('main.role_view', role=r.id)}}"> {{_('View')}} </A> -
+          <A HREF="{{url_for('main.role_edit', role=r.id)}}"> {{_('Edit')}} </A>
         </td>
       </tr>
     {% endfor %}
@@ -26,6 +29,44 @@
   </table>
 {% endif %}
 
+
+
+{% if role %}
+
+  <table class="table table-hover">
+
+      <tr>
+        <td> {{_('System ID')}}  </td>         <td>  {{ role.inventory_id() }} </td></tr>
+        <td> {{_('Role Name')}}  </td>         <td>  <A HREF="{{url_for('main.role_edit', role=role.id)}}"> {{ role.name }} </A> </td></tr>
+
+        <td> {{_('Role Description')}}  </td>   <td>
+        {% if role.description %}
+          {% filter markdown %}
+
+            {{ role.description }}
+
+          {% endfilter %}
+        {% endif %}
+                                                            </td></tr>
+
+        <td> {{_('Role give access to resouce(s):')}}  </td>
+        <td>
+          <table class="table table-hover">
+            <tr><td>{{ _('Service Name') }} </td><td> {{ _('Resouce Name') }} </td> <td>{{ _('Environment') }} </td></tr>
+          {% for re in role.resources %}
+            <tr>
+              <td>{{re.service.name }} </td>
+              <td><A HREF="{{url_for('main.resource_edit', resource=re.id)}}"> {{ re.name }} </A></td> 
+              <td>{{ re.environment }} </td>
+            </td></tr>
+          {% endfor %}
+        </table>
+        </td></tr>
+        <td> {{_('Role Comment')}}  </td>      <td>  {{ role.comment }} </td></tr>
+      </tr>
+
+  </table>
+{% endif %}
 
 
 
