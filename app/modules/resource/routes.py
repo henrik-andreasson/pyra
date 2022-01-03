@@ -4,7 +4,6 @@ from flask_login import login_required
 from app import db, audit
 from app.main import bp
 from app.models import Service
-# from app.modules.resource.models import Switch, SwitchPort
 from app.modules.resource.models import Resource
 from app.modules.resource.forms import ResourceForm
 from flask_babel import _
@@ -29,7 +28,9 @@ def resource_add():
             return redirect(request.referrer)
 
         resource = Resource(name=form.name.data,
-                            comment=form.comment.data
+                            comment=form.comment.data,
+                            environment=form.environment.data,
+                            external_id=form.external_id.data
                             )
 
         resource.service = service
@@ -75,6 +76,8 @@ def resource_edit():
 
         resource.name = form.name.data
         resource.comment = form.comment.data
+        resource.environment=form.environment.data
+        resource.external_id=form.external_id.data
 
         db.session.commit()
         audit.auditlog_update_post('resource', original_data=original_data, updated_data=resource.to_dict(), record_name=resource.name)
@@ -86,7 +89,7 @@ def resource_edit():
 
         form.name.data = resource.name
         form.comment.data = resource.comment
-
+        form.external_id.data = resource.external_id
         return render_template('resource.html', title=_('Edit Resource'),
                                form=form)
 

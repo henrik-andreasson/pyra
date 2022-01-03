@@ -8,8 +8,10 @@ class Resource(db.Model):
     name = db.Column(db.String(140), unique=True)
     service_id = db.Column(db.Integer, db.ForeignKey('service.id'))
     service = db.relationship('Service')
+    external_id = db.Column(db.String(140))
+    environment = db.Column(db.String(140))
     comment = db.Column(db.String(2000))
-
+  
     def __repr__(self):
         return '<Switch {} ({})>'.format(self.name, self.alias)
 
@@ -21,6 +23,8 @@ class Resource(db.Model):
             'id': self.id,
             'name': self.name,
             'service_id': self.service_id,
+            'external_id': self.external_id,
+            'environment': self.environment,
             'comment': self.comment,
             }
         return data
@@ -28,7 +32,7 @@ class Resource(db.Model):
     def from_dict(self, data, new_work=False):
         from app.models import Service
 
-        for field in ['name', 'comment']:
+        for field in ['name', 'comment', 'external_id', 'environment']:
             if field not in data:
                 return {'msg': "must include field: %s" % field, 'success': False}
             else:
