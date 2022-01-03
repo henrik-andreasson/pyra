@@ -17,6 +17,7 @@ class Role(db.Model):
     name = db.Column(db.String(140), unique=True)
     resources = db.relationship('Resource', secondary=resource_role)
     status = db.Column(db.String(20))
+    description = db.Column(db.TEXT)
     comment = db.Column(db.String(255))
 
     def __repr__(self):
@@ -27,6 +28,7 @@ class Role(db.Model):
             'id': self.id,
             'name': self.name,
             'status': self.status,
+            'description': self.description,
             'comment': self.comment
             }
         return data

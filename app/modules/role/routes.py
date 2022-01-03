@@ -9,6 +9,7 @@ from app.modules.resource.models import Resource
 from app.modules.resource.forms import ResourceForm
 from flask_babel import _
 from datetime import datetime
+import markdown
 
 
 @bp.route('/role/add', methods=['GET', 'POST'])
@@ -28,6 +29,7 @@ def role_add():
             role.resources.append(resource)
 
         role.comment = form.comment.data
+        role.description = form.description.data
         db.session.add(role)
         db.session.commit()
         audit.auditlog_new_post('role', original_data=role.to_dict(), record_name=role.name)
@@ -65,12 +67,13 @@ def role_edit():
     if request.method == 'POST' and form.validate_on_submit():
 
         role.name = form.name.data
+        role.description = form.description.data
         role.resources = []
         for r in form.resources.data:
             resource = Resource.query.get(r)
             print("Adding: Resource: {} to: {}".format(resource.name, role.name))
             role.resources.append(resource)
-
+  
         role.comment = form.comment.data
         db.session.commit()
         audit.auditlog_update_post('role', original_data=original_data, updated_data=role.to_dict(), record_name=role.name)
@@ -84,9 +87,33 @@ def role_edit():
         form = RoleForm(resources=pre_selected_resources)
         form.name.data = role.name
         form.comment.data = role.comment
+        form.description.data = role.description
 
         return render_template('role.html', title=_('Edit Role'),
                                form=form)
+
+
+
+@bp.route('/role/view/', methods=['GET', 'POST'])
+@login_required
+def role_view():
+
+    if 'cancel' in request.form:
+        return redirect(request.referrer)
+
+    roleid = request.args.get('role')
+    if roleid is None:
+        flash(_('roleid argument not found'))
+        return redirect(request.referrer)
+
+    role = Role.query.get(roleid)
+
+    if role is None:
+        flash(_('Role not found'))
+        return redirect(request.referrer)
+
+    return render_template('role.html', title=_('View Role'),
+                           role=role)
 
 
 @bp.route('/role/list/', methods=['GET', 'POST'])
