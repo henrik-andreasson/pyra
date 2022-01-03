@@ -1,0 +1,17 @@
+[Unit]
+Description = Gunicorn for pyra
+After = network.target
+
+[Service]
+PermissionsStartOnly = true
+PIDFile = /run/pyra/pyra.pid
+WorkingDirectory = /opt/pyra
+ExecStartPre = /bin/mkdir /run/pyra
+ExecStart = /usr/bin/env gunicorn pyra:app -b 0.0.0.0:443 --pid /run/pyra/pyra.pid  --keyfile /opt/pyra/privkey.pem  --certfile  /opt/pyra/cert.pem
+ExecReload = /bin/kill -s HUP $MAINPID
+ExecStop = /bin/kill -s TERM $MAINPID
+ExecStopPost = /bin/rm -rf /run/pyra
+PrivateTmp = true
+
+[Install]
+WantedBy = multi-user.target

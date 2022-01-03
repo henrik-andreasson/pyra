@@ -2,10 +2,10 @@
 
 if [ "x${INSTALL_PATH}" == "x" ] ; then
 
-	if [ -d "/inventorpy" ] ; then
-		INSTALL_PATH=/inventorpy
-	elif [ -d "/opt/inventorpy" ] ; then
-		INSTALL_PATH=/opt/inventorpy
+	if [ -d "/pyra" ] ; then
+		INSTALL_PATH=/pyra
+	elif [ -d "/opt/pyra" ] ; then
+		INSTALL_PATH=/opt/pyra
 	fi
 fi
 
@@ -45,13 +45,13 @@ fi
 
 if [ $USE_CERT -gt 1 ] ; then
 
-    gunicorn inventorpy:app -b 0.0.0.0:${LISTEN} \
+    gunicorn3 inventorpy:app -b 0.0.0.0:${LISTEN} \
          --pid "${INSTALL_PATH}/teamplan.pid" \
          --keyfile "${INSTALL_PATH}/key.pem"  \
          --certfile  "${INSTALL_PATH}/cert.pem" ${EXTRA_OPTIONS}
 
 else
 
-    gunicorn inventorpy:app -b 0.0.0.0:${LISTEN} ${EXTRA_OPTIONS}
+    gunicorn3 pyra:app -b 0.0.0.0:${LISTEN} ${EXTRA_OPTIONS}
 
 fi
