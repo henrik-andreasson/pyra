@@ -1,23 +1,30 @@
 # Use an official Python runtime as a parent image
-FROM centos:latest
+FROM debian:latest
 
 # Set the working directory to /app
 WORKDIR /pyra
 
-#COPY . /pyra
+COPY . /pyra
 
 # Install any needed packages
-RUN yum install -y python3 sqlite
+RUN apt-get update
 
-RUN pip3 install flask-sqlalchemy flask-migrate flask-login flask-mail \
-  flask-bootstrap flask-moment flask-babel python-dotenv jwt flask-wtf \
-  WTForms-Components flask-httpauth rocketchat_API icalendar gunicorn \
-  ipcalc email_validator
+# Install any needed packages
+RUN apt-get install --no-install-recommends -y python3 \
+        sqlite3 jq python3-pip python3-setuptools  cargo \
+        python3-wheel gunicorn3
+
+
+RUN pip3 install -U pip
+RUN pip3 install -r requirements.txt
+
+RUN apt-get clean
+RUN rm -rf /var/lib/apt/lists/*
 
 # Make port available to the world outside this container
 EXPOSE 8080
 
-ENV FLASK_APP=pyra.py
+ENV FLASK_APP=/pyra/pyra.py
 
 # Run flask when the container launches
 CMD [ "/pyra/gunicorn-start.sh"]

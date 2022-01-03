@@ -109,3 +109,84 @@ def change_password():
         return redirect(url_for('main.index'))
 
     return render_template('auth/change_password.html', form=form)
+
+ 
+@bp.route('/user/set_password/', methods=['GET', 'POST'])
+@login_required
+def user_set_password():
+
+    admin = User.query.filter_by(username=current_user.username).first()
+    if admin.role != "admin":
+        flash(_('Updating other users is limited to admins'))
+        return redirect(url_for('main.index'))
+
+    form = AdminChangePasswordForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        user = User.query.get(form.username.data)
+        if user is not None:
+            user.set_password(form.password.data)
+            db.session.commit()
+            flash(_('Password changed'))
+            return redirect(url_for('main.index'))
+        else:
+            flash(_('Password change FAILED'))
+            return redirect(url_for('main.index'))
+
+    return render_template('auth/change_password.html', form=form)
+
+
+@bp.route('/user/save/', methods=['GET', 'POST'])
+@login_required
+def user_save():
+    admin = User.query.filter_by(username=current_user.username).first()
+    if admin.role != "admin":
+
+        flash(_('Updating other users is limited to admins'))
+        return redirect(url_for('main.index'))
+    userid = request.args.get('user')
+    if userid is None:
+        flash(_('Userid not passed to user update'))
+        return redirect(url_for('main.index'))
+
+    user = User.query.get(userid)
+    if user is None:
+        flash(_('Userid not passed to user update'))
+        return redirect(url_for('main.index'))
+
+    form = AdminUpdateUserForm()
+    form.username.choices = [(user.id, user.username)]
+
+    if request.method == 'POST' and form.validate_on_submit():
+        user.email = form.email.data
+        user.work_percent = form.work_percent.data
+        user.role = form.role.data
+        db.session.commit()
+        flash(_('User Updated'))
+        return redirect(url_for('main.index'))
+    else:
+        form.email.data = user.email
+        form.manual_schedule.data = user.manual_schedule
+        form.work_percent.data = user.work_percent
+        form.role.data = user.role
+        return render_template('auth/change_password.html', form=form)
+
+
+@bp.route('/user/update/', methods=['GET', 'POST'])
+@login_required
+def user_update():
+
+    admin = User.query.filter_by(username=current_user.username).first()
+    if admin.role != "admin":
+        flash(_('Updating other users is limited to admins'))
+        return redirect(url_for('main.index'))
+
+    form = AdminSelecteUserForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        user = User.query.get(form.username.data)
+        if user is not None:
+            return redirect(url_for('auth.user_save', user=user.id))
+        else:
+            flash(_('User update FAILED'))
+            return redirect(url_for('main.index'))
+
+    return render_template('auth/change_password.html', form=form)

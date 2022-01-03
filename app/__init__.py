@@ -11,6 +11,7 @@ from flask_moment import Moment
 from flask_babel import Babel, lazy_gettext as _l
 from config import Config
 
+
 db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
@@ -24,7 +25,6 @@ babel = Babel()
 from app.models import Audit
 audit = Audit()
 
-
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
@@ -36,6 +36,10 @@ def create_app(config_class=Config):
     bootstrap.init_app(app)
     moment.init_app(app)
     babel.init_app(app)
+
+ 
+    from flaskext.markdown import Markdown
+    Markdown(app)
 
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)

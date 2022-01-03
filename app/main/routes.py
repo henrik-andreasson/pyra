@@ -25,15 +25,6 @@ def index():
     return render_template('index.html', title=_('Explore'))
 
 
-@bp.route('/user/<username>')
-@login_required
-def user(username):
-    user = User.query.filter_by(username=username).first_or_404()
-    print("user: %s" % (user.username))
-
-    return render_template('user.html', user=user)
-
-
 @bp.route('/service/add', methods=['GET', 'POST'])
 @login_required
 def service_add():
@@ -130,6 +121,34 @@ def edit_profile():
         form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', title=_('Edit Profile'),
                            form=form)
+
+
+@bp.route('/user/<username>')
+@login_required
+def user(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    print("user: %s" % (user.username))
+    services = Service.query.all()
+
+    return render_template('user.html', user=user,
+                           services=services, title=_("User"))
+
+
+@bp.route('/user/list')
+@login_required
+def user_list():
+    page = request.args.get('page', 1, type=int)
+    users = User.query.order_by(User.username).paginate(
+        page, current_app.config['POSTS_PER_PAGE'], False)
+    services = Service.query.all()
+
+    next_url = url_for(
+        'main.user_list', page=users.next_num) if users.has_next else None
+    prev_url = url_for(
+        'main.user_list', page=users.prev_num) if users.has_prev else None
+    return render_template('users.html', users=users.items, services=services,
+                           next_url=next_url, prev_url=prev_url,
+                           title=_("User List"))
 
 
 @bp.route('/location/add', methods=['GET', 'POST'])
