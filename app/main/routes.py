@@ -3,7 +3,7 @@ from flask_login import current_user, login_required
 from flask_babel import _, get_locale
 from app import db, audit
 from app.main.forms import EditProfileForm, ServiceForm, LocationForm
-from app.models import User, Service, Location, Audit
+from app.main.models import User, Service, Location, Audit
 from app.modules.access.models import Access
 from app.modules.role.models import Role
 from app.modules.resource.models import Resource

@@ -7,7 +7,7 @@ from app import db, audit
 from app.auth import bp
 from app.auth.forms import LoginForm, RegistrationForm, \
     ResetPasswordRequestForm, ResetPasswordForm, ChangePasswordForm
-from app.models import User
+from app.main.models import User
 from app.auth.email import send_password_reset_email
 
 
@@ -110,7 +110,7 @@ def change_password():
 
     return render_template('auth/change_password.html', form=form)
 
- 
+
 @bp.route('/user/set_password/', methods=['GET', 'POST'])
 @login_required
 def user_set_password():

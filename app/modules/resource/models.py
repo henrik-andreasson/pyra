@@ -11,7 +11,7 @@ class Resource(db.Model):
     external_id = db.Column(db.String(140))
     environment = db.Column(db.String(140))
     comment = db.Column(db.String(2000))
-  
+
     def __repr__(self):
         return '<Switch {} ({})>'.format(self.name, self.alias)
 
@@ -30,7 +30,7 @@ class Resource(db.Model):
         return data
 
     def from_dict(self, data, new_work=False):
-        from app.models import Service
+        from app.main.models import Service
 
         for field in ['name', 'comment', 'external_id', 'environment']:
             if field not in data:

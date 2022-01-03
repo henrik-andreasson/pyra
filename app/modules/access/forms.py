@@ -3,7 +3,7 @@ from wtforms import StringField, SubmitField, SelectField, TextAreaField, DateTi
 from wtforms.validators import DataRequired
 from flask_babel import lazy_gettext as _l
 from datetime import datetime
-from app.models import User
+from app.main.models import User
 # from app.modules.access.models import Access
 # from app.modules.resource.models import Resouce
 from app.modules.role.models import Role

@@ -22,7 +22,7 @@ bootstrap = Bootstrap()
 moment = Moment()
 babel = Babel()
 
-from app.models import Audit
+from app.main.models import Audit
 audit = Audit()
 
 def create_app(config_class=Config):

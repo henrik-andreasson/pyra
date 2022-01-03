@@ -2,7 +2,7 @@ from flask import render_template, flash, redirect, url_for, request, current_ap
 from flask_login import login_required, current_user
 from app import db, audit
 from app.main import bp
-from app.models import Location, User
+from app.main.models import Location, User
 from app.modules.role.models import Role
 from app.modules.role.forms import RoleForm
 from app.modules.resource.models import Resource

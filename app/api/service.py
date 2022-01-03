@@ -1,6 +1,6 @@
 from app.api import bp
 from flask import jsonify
-from app.models import User, Service
+from app.main.models import User, Service
 from flask import url_for
 from app import db, audit
 from app.api.errors import bad_request

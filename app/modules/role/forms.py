@@ -4,7 +4,7 @@ from wtforms.validators import DataRequired
 from flask_babel import lazy_gettext as _l
 from app.modules.role.models import Role
 from app.modules.resource.models import Resource
-# from app.models import User, Location
+# from app.main.models import User, Location
 from wtforms.widgets import TextArea
 
 class RoleForm(FlaskForm):

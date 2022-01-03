@@ -3,7 +3,7 @@ from flask import render_template, flash, redirect, url_for, request, \
 from flask_login import login_required
 from app import db, audit
 from app.main import bp
-from app.models import Service
+from app.main.models import Service
 from app.modules.resource.models import Resource
 from app.modules.resource.forms import ResourceForm
 from flask_babel import _
