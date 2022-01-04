@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect, url_for, request, \
     current_app
 from flask_login import login_required
-from app import db, audit
+from app import db
 from app.main import bp
 from app.main.models import Service
 from app.modules.resource.models import Resource
@@ -36,7 +36,7 @@ def resource_add():
         resource.service = service
         db.session.add(resource)
         db.session.commit()
-        audit.auditlog_new_post('resource', original_data=resource.to_dict(), record_name=resource.name)
+        current_app.audit.auditlog_new_post('resource', original_data=resource.to_dict(), record_name=resource.name)
         flash(_('New resource is now posted!'))
 
         return redirect(url_for('main.index'))
@@ -80,7 +80,7 @@ def resource_edit():
         resource.external_id=form.external_id.data
 
         db.session.commit()
-        audit.auditlog_update_post('resource', original_data=original_data, updated_data=resource.to_dict(), record_name=resource.name)
+        current_app.audit.auditlog_update_post('resource', original_data=original_data, updated_data=resource.to_dict(), record_name=resource.name)
         flash(_('Your changes have been saved.'))
 
         return redirect(url_for('main.index'))
@@ -135,6 +135,6 @@ def resource_delete():
     flash(deleted_msg)
     db.session.delete(resource)
     db.session.commit()
-    audit.auditlog_delete_post('resource', data=resource.to_dict(), record_name=resource.name)
+    current_app.audit.auditlog_delete_post('resource', data=resource.to_dict(), record_name=resource.name)
 
     return redirect(url_for('main.index'))

@@ -1,6 +1,6 @@
 from flask import render_template, flash, redirect, url_for, request, current_app
 from flask_login import login_required, current_user
-from app import db, audit
+from app import db
 from app.main import bp
 from app.main.models import Location, User
 from app.modules.role.models import Role
@@ -32,7 +32,7 @@ def role_add():
         role.description = form.description.data
         db.session.add(role)
         db.session.commit()
-        audit.auditlog_new_post('role', original_data=role.to_dict(), record_name=role.name)
+        current_app.audit.auditlog_new_post('role', original_data=role.to_dict(), record_name=role.name)
 
         flash(_('New Role is now posted!'))
 
@@ -73,10 +73,10 @@ def role_edit():
             resource = Resource.query.get(r)
             print("Adding: Resource: {} to: {}".format(resource.name, role.name))
             role.resources.append(resource)
-  
+
         role.comment = form.comment.data
         db.session.commit()
-        audit.auditlog_update_post('role', original_data=original_data, updated_data=role.to_dict(), record_name=role.name)
+        current_app.audit.auditlog_update_post('role', original_data=original_data, updated_data=role.to_dict(), record_name=role.name)
 
         flash(_('Your changes to the role have been saved.'))
 
@@ -166,7 +166,7 @@ def role_delete():
                                            role.location.longName())
     db.session.delete(role)
     db.session.commit()
-    audit.auditlog_delete_post('role', data=role.to_dict(), record_name=role.name)
+    current_app.audit.auditlog_delete_post('role', data=role.to_dict(), record_name=role.name)
     flash(deleted_msg)
 
     return redirect(url_for('main.index'))

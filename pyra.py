@@ -1,5 +1,5 @@
 from app import create_app, db, cli
-from app.models import User, Service
+from app.main.models import User, Service
 
 app = create_app()
 cli.register(app)

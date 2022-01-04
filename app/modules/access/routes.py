@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect, url_for, request, \
     current_app
 from flask_login import login_required, current_user
-from app import db, audit
+from app import db
 from app.main import bp
 from app.main.models import User
 from app.modules.access.models import Access
@@ -52,7 +52,7 @@ def access_add():
         access.requestor = requestor.username
         db.session.add(access)
         db.session.commit()
-        audit.auditlog_new_post('access', original_data=access.to_dict(), record_name=access.__tablename__)
+        current_app.audit.auditlog_new_post('access', original_data=access.to_dict(), record_name=access.__tablename__)
         flash(_('New access is now posted!'))
 
         return redirect(url_for('main.index'))
@@ -118,7 +118,7 @@ def access_edit():
         access.requestor = requestor.username
 
         db.session.commit()
-        audit.auditlog_update_post('access', original_data=original_data, updated_data=access.to_dict(), record_name=access.__tablename__)
+        current_app.audit.auditlog_update_post('access', original_data=original_data, updated_data=access.to_dict(), record_name=access.__tablename__)
         flash(_('Your changes have been saved.'))
 
         return redirect(url_for('main.index'))
@@ -177,7 +177,7 @@ def access_approve():
             flash(f"Pending Access to role: {access.role.name} for: {access.user.username} was postponed")
             return redirect(request.referrer)
 
-        audit.auditlog_update_post('access', original_data=original_data, updated_data=access.to_dict(), record_name=access.__tablename__)
+        current_app.audit.auditlog_update_post('access', original_data=original_data, updated_data=access.to_dict(), record_name=access.__tablename__)
         return redirect(url_for('main.index'))
 
     else:
@@ -233,7 +233,7 @@ def access_implement():
             flash(f"Pending Access to role: {access.role.name} for: {access.user.username} was postponed")
             return redirect(request.referrer)
 
-        audit.auditlog_update_post('access', original_data=original_data, updated_data=access.to_dict(), record_name=access.__tablename__)
+        current_app.audit.auditlog_update_post('access', original_data=original_data, updated_data=access.to_dict(), record_name=access.__tablename__)
         return redirect(url_for('main.index'))
 
     else:
@@ -277,6 +277,6 @@ def access_delete():
     flash(deleted_msg)
     db.session.delete(access)
     db.session.commit()
-    audit.auditlog_delete_post('access', data=access.to_dict(), record_name=access.__class__.__name__.lower())
+    current_app.audit.auditlog_delete_post('access', data=access.to_dict(), record_name=access.__class__.__name__.lower())
 
     return redirect(url_for('main.index'))

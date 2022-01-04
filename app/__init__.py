@@ -37,7 +37,7 @@ def create_app(config_class=Config):
     moment.init_app(app)
     babel.init_app(app)
 
- 
+
     from flaskext.markdown import Markdown
     Markdown(app)
 
@@ -100,4 +100,4 @@ def get_locale():
     return request.accept_languages.best_match(current_app.config['LANGUAGES'])
 
 
-from app import models
+#from app import models
