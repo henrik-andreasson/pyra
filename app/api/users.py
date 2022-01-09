@@ -1,11 +1,12 @@
 from app.api import bp
-from flask import jsonify
+from flask import jsonify, current_app
 from app.main.models import User
 from flask import url_for
-from app import db, audit
+from app import db
 from app.api.errors import bad_request
 from flask import request
 from app.api.auth import token_auth
+from app.main.models import Audit
 
 
 @bp.route('/users', methods=['POST'])
@@ -60,6 +61,7 @@ def update_user(id):
         return bad_request('please use a different email address')
     user.from_dict(data, new_user=False)
     db.session.commit()
-    audit.auditlog_update_post('user', original_data=original_data, updated_data=user.to_dict(), record_name=user.username)
+
+    Audit().auditlog_update_post('user', original_data=original_data, updated_data=user.to_dict(), record_name=user.username)
 
     return jsonify(user.to_dict())

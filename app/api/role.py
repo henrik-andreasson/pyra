@@ -1,11 +1,12 @@
 from app.api import bp
-from flask import jsonify
+from flask import jsonify, current_app
 from app.modules.role.models import Role
 from flask import url_for
-from app import db, audit
+from app import db
 from app.api.errors import bad_request
 from flask import request
 from app.api.auth import token_auth
+from app.main.models import Audit
 
 
 @bp.route('/role/add', methods=['POST'])
@@ -25,7 +26,8 @@ def create_role():
 
     db.session.add(role)
     db.session.commit()
-    audit.auditlog_new_post('hsm_domain', original_data=role.to_dict(), record_name=role.name)
+
+    Audit().auditlog_new_post('hsm_domain', original_data=role.to_dict(), record_name=role.name)
 
     response = jsonify(role.to_dict())
 
@@ -60,6 +62,6 @@ def update_role(id):
     data = request.get_json() or {}
     role.from_dict(data, new_role=False)
     db.session.commit()
-    audit.auditlog_update_post('hsm_domain', original_data=original_data, updated_data=data)
+    Audit().auditlog_update_post('hsm_domain', original_data=original_data, updated_data=data)
 
     return jsonify(role.to_dict())

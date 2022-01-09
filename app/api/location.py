@@ -1,11 +1,12 @@
 from app.api import bp
-from flask import jsonify
+from flask import jsonify, current_app
 from app.main.models import Location
 from flask import url_for
-from app import db, audit
+from app import db
 from app.api.errors import bad_request
 from flask import request
 from app.api.auth import token_auth
+from app.main.models import Audit
 
 
 @bp.route('/location', methods=['POST'])
@@ -25,7 +26,7 @@ def create_location():
 
     db.session.add(location)
     db.session.commit()
-    audit.auditlog_new_post('location', original_data=location.to_dict(), record_name=location.longName())
+    Audit().auditlog_new_post('location', original_data=location.to_dict(), record_name=location.longName())
     response = jsonify(location.to_dict())
 
     response.status_code = 201
@@ -60,6 +61,7 @@ def update_location(id):
     data = request.get_json() or {}
     location.from_dict(data, new_location=False)
     db.session.commit()
-    audit.auditlog_update_post('location', original_data=original_data, updated_data=location.to_dict(), record_name=location.longName())
+
+    Audit().auditlog_update_post('location', original_data=original_data, updated_data=location.to_dict(), record_name=location.longName())
 
     return jsonify(location.to_dict())

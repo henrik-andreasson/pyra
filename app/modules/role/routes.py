@@ -10,6 +10,7 @@ from app.modules.resource.forms import ResourceForm
 from flask_babel import _
 from datetime import datetime
 import markdown
+from app.main.models import Audit
 
 
 @bp.route('/role/add', methods=['GET', 'POST'])
@@ -32,7 +33,8 @@ def role_add():
         role.description = form.description.data
         db.session.add(role)
         db.session.commit()
-        current_app.audit.auditlog_new_post('role', original_data=role.to_dict(), record_name=role.name)
+
+        Audit().auditlog_new_post('role', original_data=role.to_dict(), record_name=role.name)
 
         flash(_('New Role is now posted!'))
 
@@ -76,7 +78,8 @@ def role_edit():
 
         role.comment = form.comment.data
         db.session.commit()
-        current_app.audit.auditlog_update_post('role', original_data=original_data, updated_data=role.to_dict(), record_name=role.name)
+
+        Audit().auditlog_update_post('role', original_data=original_data, updated_data=role.to_dict(), record_name=role.name)
 
         flash(_('Your changes to the role have been saved.'))
 
@@ -91,7 +94,6 @@ def role_edit():
 
         return render_template('role.html', title=_('Edit Role'),
                                form=form)
-
 
 
 @bp.route('/role/view/', methods=['GET', 'POST'])
@@ -162,11 +164,12 @@ def role_delete():
         flash(_('Role was not deleted, id not found!'))
         return redirect(url_for('main.index'))
 
-    deleted_msg = 'Role deleted: %s %s' % (role.name,
-                                           role.location.longName())
+    deleted_msg = f'Role deleted: {role.name} {role.comment}'
+
     db.session.delete(role)
     db.session.commit()
-    current_app.audit.auditlog_delete_post('role', data=role.to_dict(), record_name=role.name)
+
+    Audit().auditlog_delete_post('role', data=role.to_dict(), record_name=role.name)
     flash(deleted_msg)
 
     return redirect(url_for('main.index'))

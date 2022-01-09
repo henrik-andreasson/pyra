@@ -1,12 +1,13 @@
 from app.api import bp
-from flask import jsonify
+from flask import jsonify, current_app
 from app.main.models import User, Service
 from flask import url_for
-from app import db, audit
+from app import db
 from app.api.errors import bad_request
 from flask import request
 # from flask import g, abort
 from app.api.auth import token_auth
+from app.main.models import Audit
 
 
 @bp.route('/service', methods=['POST'])
@@ -25,6 +26,7 @@ def create_service():
 
     db.session.add(service)
     db.session.commit()
+    audit = Audit()
     audit.auditlog_new_post('service', original_data=service.to_dict(), record_name=service.name)
 
     response = jsonify(service.to_dict())
@@ -58,7 +60,7 @@ def update_service(id):
     data = request.get_json() or {}
     service.from_dict(data, new_service=False)
     db.session.commit()
-    audit.auditlog_update_post('service', original_data=original_data, updated_data=service.to_dict(), record_name=service.name)
+    Audit().auditlog_update_post('service', original_data=original_data, updated_data=service.to_dict(), record_name=service.name)
     return jsonify(service.to_dict())
 
 
@@ -73,9 +75,9 @@ def add_user_to_service():
     user = User.query.filter_by(username=data['username']).first()
     original_data = service.to_dict()
 
-    service.users.append(user)
+    db.session.add(user)
     db.session.commit()
-    audit.auditlog_update_post('service', original_data=original_data, updated_data=service.to_dict(), record_name=service.name)
+    Audit().auditlog_update_post('service', original_data=original_data, updated_data=service.to_dict(), record_name=service.name)
 
     response = jsonify(service.to_dict())
     response.status_code = 201

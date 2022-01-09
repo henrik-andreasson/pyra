@@ -1,11 +1,12 @@
 from app.api import bp
-from flask import jsonify
+from flask import jsonify, current_app
 from app.modules.resource.models import Resource
 from flask import url_for
-from app import db, audit
+from app import db
 from app.api.errors import bad_request
 from flask import request
 from app.api.auth import token_auth
+from app.main.models import Audit
 
 
 @bp.route('/resource/add', methods=['POST'])
@@ -28,7 +29,8 @@ def create_resource():
 
     db.session.add(resource)
     db.session.commit()
-    audit.auditlog_new_post('hsm_pci_card', original_data=resource.to_dict(), record_name=resource.name)
+
+    Audit().auditlog_new_post('hsm_pci_card', original_data=resource.to_dict(), record_name=resource.name)
 
     response = jsonify(resource.to_dict())
 
@@ -64,6 +66,7 @@ def update_resource(id):
     data = request.get_json() or {}
     resource.from_dict(data)
     db.session.commit()
-    audit.auditlog_update_post('hsm_pci_card', original_data=original_data, updated_data=data, record_name=resource.name)
+
+    Audit().auditlog_update_post('hsm_pci_card', original_data=original_data, updated_data=data, record_name=resource.name)
 
     return jsonify(resource.to_dict())

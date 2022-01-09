@@ -7,6 +7,7 @@ from app.main.models import Service
 from app.modules.resource.models import Resource
 from app.modules.resource.forms import ResourceForm
 from flask_babel import _
+from app.main.models import Audit
 
 
 @bp.route('/resource/add', methods=['GET', 'POST'])
@@ -36,7 +37,8 @@ def resource_add():
         resource.service = service
         db.session.add(resource)
         db.session.commit()
-        current_app.audit.auditlog_new_post('resource', original_data=resource.to_dict(), record_name=resource.name)
+
+        Audit().auditlog_new_post('resource', original_data=resource.to_dict(), record_name=resource.name)
         flash(_('New resource is now posted!'))
 
         return redirect(url_for('main.index'))
@@ -76,11 +78,11 @@ def resource_edit():
 
         resource.name = form.name.data
         resource.comment = form.comment.data
-        resource.environment=form.environment.data
-        resource.external_id=form.external_id.data
-
+        resource.environment = form.environment.data
+        resource.external_id = form.external_id.data
         db.session.commit()
-        current_app.audit.auditlog_update_post('resource', original_data=original_data, updated_data=resource.to_dict(), record_name=resource.name)
+
+        Audit().auditlog_update_post('resource', original_data=original_data, updated_data=resource.to_dict(), record_name=resource.name)
         flash(_('Your changes have been saved.'))
 
         return redirect(url_for('main.index'))
@@ -135,6 +137,7 @@ def resource_delete():
     flash(deleted_msg)
     db.session.delete(resource)
     db.session.commit()
-    current_app.audit.auditlog_delete_post('resource', data=resource.to_dict(), record_name=resource.name)
+
+    Audit().auditlog_delete_post('resource', data=resource.to_dict(), record_name=resource.name)
 
     return redirect(url_for('main.index'))

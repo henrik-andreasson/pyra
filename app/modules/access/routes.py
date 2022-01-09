@@ -6,12 +6,13 @@ from app.main import bp
 from app.main.models import User
 from app.modules.access.models import Access
 from app.modules.role.models import Role
-from app.modules.resource.models import Resource
-from app.modules.role.forms import RoleForm
-from app.modules.resource.forms import ResourceForm
+#from app.modules.resource.models import Resource
+#from app.modules.role.forms import RoleForm
+#from app.modules.resource.forms import ResourceForm
 from app.modules.access.forms import AccessForm, ApproveAccessForm
 from flask_babel import _
 from datetime import datetime
+from app.main.models import Audit
 
 
 @bp.route('/access/add', methods=['GET', 'POST'])
@@ -52,7 +53,8 @@ def access_add():
         access.requestor = requestor.username
         db.session.add(access)
         db.session.commit()
-        current_app.audit.auditlog_new_post('access', original_data=access.to_dict(), record_name=access.__tablename__)
+
+        Audit().auditlog_new_post('access', original_data=access.to_dict(), record_name=access.__tablename__)
         flash(_('New access is now posted!'))
 
         return redirect(url_for('main.index'))
@@ -116,9 +118,9 @@ def access_edit():
         access.request_ts = datetime.now()
         print(f'requestor: {requestor.username}')
         access.requestor = requestor.username
-
         db.session.commit()
-        current_app.audit.auditlog_update_post('access', original_data=original_data, updated_data=access.to_dict(), record_name=access.__tablename__)
+
+        Audit().auditlog_update_post('access', original_data=original_data, updated_data=access.to_dict(), record_name=access.__tablename__)
         flash(_('Your changes have been saved.'))
 
         return redirect(url_for('main.index'))
@@ -128,7 +130,6 @@ def access_edit():
         form.role.data = access.role_id
         return render_template('access.html', title=_('Edit Access'),
                                form=form)
-
 
 
 @bp.route('/access/approve/', methods=['GET', 'POST'])
@@ -177,7 +178,7 @@ def access_approve():
             flash(f"Pending Access to role: {access.role.name} for: {access.user.username} was postponed")
             return redirect(request.referrer)
 
-        current_app.audit.auditlog_update_post('access', original_data=original_data, updated_data=access.to_dict(), record_name=access.__tablename__)
+        Audit().auditlog_update_post(module='access', original_data=original_data, updated_data=access.to_dict(), record_name=access.__tablename__)
         return redirect(url_for('main.index'))
 
     else:
@@ -185,7 +186,6 @@ def access_approve():
         form.role.data = access.role.name
         return render_template('access.html', title=_('Approved Access'),
                                form=form)
-
 
 
 @bp.route('/access/implement/', methods=['GET', 'POST'])
@@ -233,7 +233,7 @@ def access_implement():
             flash(f"Pending Access to role: {access.role.name} for: {access.user.username} was postponed")
             return redirect(request.referrer)
 
-        current_app.audit.auditlog_update_post('access', original_data=original_data, updated_data=access.to_dict(), record_name=access.__tablename__)
+        Audit().auditlog_update_post('access', original_data=original_data, updated_data=access.to_dict(), record_name=access.__tablename__)
         return redirect(url_for('main.index'))
 
     else:
@@ -277,6 +277,7 @@ def access_delete():
     flash(deleted_msg)
     db.session.delete(access)
     db.session.commit()
-    current_app.audit.auditlog_delete_post('access', data=access.to_dict(), record_name=access.__class__.__name__.lower())
+
+    Audit().auditlog_delete_post('access', data=access.to_dict(), record_name=access.__class__.__name__.lower())
 
     return redirect(url_for('main.index'))

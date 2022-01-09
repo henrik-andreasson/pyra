@@ -2,7 +2,6 @@ from flask import render_template, flash, redirect, url_for, request, g, current
 from flask_login import current_user, login_required
 from flask_babel import _, get_locale
 from app import db
-#, audit
 from app.main.forms import EditProfileForm, ServiceForm, LocationForm
 from app.main.models import User, Service, Location, Audit
 from app.modules.access.models import Access
@@ -10,6 +9,7 @@ from app.modules.role.models import Role
 from app.modules.resource.models import Resource
 from app.main import bp
 from datetime import datetime
+from app.main.models import Audit
 
 
 @bp.before_app_request
@@ -44,7 +44,8 @@ def service_add():
 
         db.session.add(service)
         db.session.commit()
-        current_app.audit.auditlog_new_post('service', original_data=service.to_dict(), record_name=service.name)
+
+        Audit().auditlog_new_post('service', original_data=service.to_dict(), record_name=service.name)
         flash(_('Service have been saved.'))
         return redirect(url_for('main.service_list'))
 
@@ -57,12 +58,14 @@ def service_add():
 def service_edit():
     if 'cancel' in request.form:
         return redirect(request.referrer)
-
     servicename = request.args.get('name')
     service = Service.query.filter_by(name=servicename).first()
     original_data = service.to_dict()
     if service is None:
         render_template('service.html', title=_('Service is not defined'))
+
+    if 'delete' in request.form:
+        return redirect(url_for('main.service_delete', service=service.id))
 
     form = ServiceForm(formdata=request.form, obj=service)
 
@@ -78,7 +81,8 @@ def service_edit():
         service.color = form.color.data
 
         db.session.commit()
-        current_app.audit.auditlog_update_post('service', original_data=original_data, updated_data=service.to_dict(), record_name=service.name)
+
+        Audit().auditlog_update_post('service', original_data=original_data, updated_data=service.to_dict(), record_name=service.name)
 
         flash(_('Your changes have been saved.'))
         return redirect(url_for('main.service_list'))
@@ -92,6 +96,27 @@ def service_edit():
         form.color.data = service.color
         return render_template('service.html', title=_('Edit Service'),
                                form=form)
+
+
+@bp.route('/service/delete', methods=['GET', 'POST'])
+@login_required
+def service_delete():
+    serviceid = request.args.get('service')
+    service = Service.query.get(serviceid)
+
+    if service is None:
+        flash(_('Service was not deleted, id not found!'))
+        return redirect(url_for('main.index'))
+
+    deleted_msg = 'Service deleted: %s\n' % (service.name)
+    flash(deleted_msg)
+    db.session.delete(service)
+    db.session.commit()
+
+    Audit().auditlog_delete_post(
+        'service', data=service.to_dict(), record_name=service.name)
+
+    return redirect(url_for('main.index'))
 
 
 @bp.route('/service/list/', methods=['GET', 'POST'])
@@ -169,7 +194,8 @@ def location_add():
         location.type = form.type.data
         db.session.add(location)
         db.session.commit()
-        current_app.audit.auditlog_new_post('location', original_data=location.to_dict(), record_name=location.longName())
+
+        Audit().auditlog_new_post('location', original_data=location.to_dict(), record_name=location.longName())
         flash(_('Location have been saved.'))
         return redirect(url_for('main.location_list'))
 
@@ -197,9 +223,9 @@ def location_edit():
         location.facillity = form.facillity.data
         location.position = form.position.data
         location.type = form.type.data
-
         db.session.commit()
-        current_app.audit.auditlog_update_post('location', original_data=original_data, updated_data=location.to_dict(), record_name=location.longName())
+
+        Audit().auditlog_update_post('location', original_data=original_data, updated_data=location.to_dict(), record_name=location.longName())
         flash(_('Your changes have been saved.'))
 
         return redirect(url_for('main.location_list'))

@@ -1,11 +1,12 @@
 from app.api import bp
-from flask import jsonify
+from flask import jsonify, current_app
 from app.modules.access.models import Access
 from flask import url_for
-from app import db, audit
+from app import db
 from app.api.errors import bad_request
 from flask import request
 from app.api.auth import token_auth
+from app.main.models import Audit
 
 
 @bp.route('/access/add', methods=['POST'])
@@ -25,7 +26,8 @@ def create_access():
 
     db.session.add(access)
     db.session.commit()
-    audit.auditlog_new_post('access', original_data=access.to_dict(), record_name=access.name)
+
+    Audit().auditlog_new_post('access', original_data=access.to_dict(), record_name=access.name)
 
     response = jsonify(access.to_dict())
 
@@ -58,6 +60,7 @@ def update_access(id):
     data = request.get_json() or {}
     access.from_dict(data, new_access=False)
     db.session.commit()
-    audit.auditlog_update_post('access', original_data=original_data, updated_data=access.to_dict(), record_name=access.hostname)
+
+    Audit().auditlog_update_post('access', original_data=original_data, updated_data=access.to_dict(), record_name=access.hostname)
 
     return jsonify(access.to_dict())
