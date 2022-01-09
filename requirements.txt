@@ -18,3 +18,4 @@ PyMySQL
 markdown
 python-dateutil
 flask-babel
+Flask-Markdown
