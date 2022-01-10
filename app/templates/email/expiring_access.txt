@@ -1,0 +1,11 @@
+Dear {{ access.user.username }},
+
+Access to {{ access.role.name }} is expiring at: {{ access.stop }}
+
+View this access online in pyra:
+
+{{ url_for('main.access_edit', access=access.id, _external=True) }}
+
+Sincerely,
+
+The PYRA Team

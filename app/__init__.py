@@ -21,9 +21,11 @@ mail = Mail()
 bootstrap = Bootstrap()
 moment = Moment()
 babel = Babel()
+migrate = Migrate()
 
 from app.main.models import Audit
 audit = Audit()
+
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -36,7 +38,7 @@ def create_app(config_class=Config):
     bootstrap.init_app(app)
     moment.init_app(app)
     babel.init_app(app)
-
+    migrate.init_app(app, db, render_as_batch=True)
 
     from flaskext.markdown import Markdown
     Markdown(app)

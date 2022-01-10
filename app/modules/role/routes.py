@@ -29,6 +29,14 @@ def role_add():
             print("Adding: Resource: {} to: {}".format(resource.name, role.name))
             role.resources.append(resource)
 
+        from app.main.models import Service
+        service = Service.query.filter_by(id=form.service.data).first_or_404()
+        if service is None:
+            flash(_('Service id not found'))
+            return redirect(request.referrer)
+        else:
+            role.service = service
+
         role.comment = form.comment.data
         role.description = form.description.data
         db.session.add(role)
@@ -76,10 +84,19 @@ def role_edit():
             print("Adding: Resource: {} to: {}".format(resource.name, role.name))
             role.resources.append(resource)
 
+        from app.main.models import Service
+        service = Service.query.filter_by(id=form.service.data).first_or_404()
+        if service is None:
+            flash(_('Service id not found'))
+            return redirect(request.referrer)
+        else:
+            role.service = service
+
         role.comment = form.comment.data
         db.session.commit()
 
-        Audit().auditlog_update_post('role', original_data=original_data, updated_data=role.to_dict(), record_name=role.name)
+        Audit().auditlog_update_post('role', original_data=original_data,
+                                     updated_data=role.to_dict(), record_name=role.name)
 
         flash(_('Your changes to the role have been saved.'))
 
@@ -90,6 +107,7 @@ def role_edit():
         form = RoleForm(resources=pre_selected_resources)
         form.name.data = role.name
         form.comment.data = role.comment
+        form.service.data = role.service_id
         form.description.data = role.description
 
         return render_template('role.html', title=_('Edit Role'),

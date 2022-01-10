@@ -12,6 +12,10 @@
 * create test scripts
 * create test suite
 
+## via cli
+
+* add check if username is taken when adding new user
+
 ## common
 
 * environment list should be global ..

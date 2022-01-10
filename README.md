@@ -67,7 +67,7 @@ Run the app
 
 Developer mode, ie mount the current directory into the docker container and have it self reload when python files are written
 
-    docker run -p5000:5000 -it  --mount type=bind,source="$(pwd)",target=/pyra pyra flask run --host=0.0.0.0 --reload
+    docker run --rm --name pyra -p5000:5000 -it  --mount type=bind,source="$(pwd)",target=/pyra pyra flask run --host=0.0.0.0 --reload
 
 # docs
 

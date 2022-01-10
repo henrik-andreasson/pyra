@@ -6,8 +6,10 @@ from app.modules.resource.models import Resource
 Base = declarative_base()
 
 resource_role = db.Table('resource_role',
-                         db.Column('role_id', db.Integer, db.ForeignKey('role.id')),
-                         db.Column('resource_id', db.Integer, db.ForeignKey('resource.id'))
+                         db.Column('role_id', db.Integer,
+                                   db.ForeignKey('role.id')),
+                         db.Column('resource_id', db.Integer,
+                                   db.ForeignKey('resource.id'))
                          )
 
 
@@ -16,6 +18,8 @@ class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(140), unique=True)
     resources = db.relationship('Resource', secondary=resource_role)
+    service_id = db.Column(db.Integer, db.ForeignKey('service.id'))
+    service = db.relationship('Service')
     status = db.Column(db.String(20))
     description = db.Column(db.TEXT)
     comment = db.Column(db.String(255))
@@ -28,6 +32,7 @@ class Role(db.Model):
             'id': self.id,
             'name': self.name,
             'status': self.status,
+            'service_id': self.service_id,
             'description': self.description,
             'comment': self.comment
             }

@@ -46,3 +46,78 @@ Run the app in background
 Developer mode, ie mount the current directory into the docker container and have it self reload when python files are written
 
     docker run -p5000:5000 -it --rm --mount type=bind,source="$(pwd)",target=/pyra pyra flask run --host=0.0.0.0 --reload
+
+## Using demo db
+
+todo
+
+
+## New db
+
+### Create a empty db
+
+Local install:
+
+    flask db init
+
+Docker install:
+
+    docker run --rm --name pyra -p5000:5000 -it  --mount type=bind,source="$(pwd)",target=/pyra pyra flask db init
+
+
+### create a db migration step
+
+Used by future upgrade to the db schema
+
+
+Local install:
+
+    flask db migrate -m base
+
+Docker install:
+
+    docker run --rm --name pyra -p5000:5000 -it  --mount type=bind,source="$(pwd)",target=/pyra pyra flask db migrate -m base
+
+
+### apply the migration step
+
+Also by future upgrade to the db schema
+
+
+Local install:
+
+    flask db upgrade
+
+Docker install:
+
+    docker run --rm --name pyra -p5000:5000 -it  --mount type=bind,source="$(pwd)",target=/pyra pyra flask db upgrade
+
+
+### Create first user
+
+Usage: flask user new [OPTIONS] USERNAME PASSWORD EMAIL
+
+Local install:
+
+    flask user new admin admin admin@localdomain
+
+Docker install:
+
+    docker run --rm --name pyra -p5000:5000 -it  --mount type=bind,source="$(pwd)",target=/pyra pyra flask user new admin admin admin@localdomain
+
+
+### Change a user password
+
+Usually this can be done via the web page.
+
+Usage: flask user passwd [OPTIONS] USERNAME PASSWORD
+
+
+Local install:
+
+    flask user passwd admin admin
+
+Docker install:
+
+
+    docker run --rm --name pyra -p5000:5000 -it  --mount type=bind,source="$(pwd)",target=/pyra pyra flask user passwd admin admin

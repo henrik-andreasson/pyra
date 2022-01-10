@@ -1,0 +1,15 @@
+<p>Dear {{ access.user.username }},</p>
+<p>
+    Access to {{ access.role.name }} is expiring at: {{ access.stop }}
+
+    View this access online in pyra:
+
+    <a href="{{ url_for('main.access_edit', access=access.id, _external=True) }}">
+        click here
+    </a>.
+
+</p>
+<p>Alternatively, you can paste the following link in your browser's address bar:</p>
+<p>{{ url_for('main.access_edit', access=access.id, _external=True)  }}</p>
+<p>Sincerely,</p>
+<p>The PYRA Role & Access Team</p>
