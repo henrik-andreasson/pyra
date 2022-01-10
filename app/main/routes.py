@@ -19,11 +19,25 @@ def before_request():
         db.session.commit()
     g.locale = str(get_locale())
 
-
+  
 @bp.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
-    return render_template('index.html', title=_('Explore'))
+    role = Role.query.order_by(Role.name).limit(10)
+    access = Access.query.order_by(Access.id).limit(10)
+    resource = Resource.query.order_by(Resource.name).limit(10)
+    user = User.query.order_by(User.username).limit(10)
+    location = Location.query.order_by(Location.place).limit(10)
+    service = Service.query.order_by(Service.name).limit(10)
+
+    return render_template('index.html', title=_('Explore'),
+                           location=location,
+                           service=service,
+                           user=user,
+                           role=role,
+                           access=access,
+                           resource=resource
+    )
 
 
 @bp.route('/service/add', methods=['GET', 'POST'])

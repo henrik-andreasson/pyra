@@ -10,6 +10,8 @@
       <td>{{_('Inventory id')}}</td>
       <td>{{_('User')}}</td>
       <td>{{_('Role')}}</td>
+      <td>{{_('Start')}}</td>
+      <td>{{_('Stop')}}</td>
       <td>{{_('Status')}}</td>
       <td>{{_('Actions')}}</td>
     </tr>
@@ -25,6 +27,12 @@
         </td>
         <td>
                 {{ a.role.name }}
+        </td>
+        <td>
+                {{ moment(a.start).format('YYYY-MM-DD') }}
+        </td>
+        <td>
+                {{ moment(a.stop).format('YYYY-MM-DD') }}
         </td>
         <td>
                 {{ a.status }}
