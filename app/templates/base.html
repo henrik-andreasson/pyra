@@ -1,7 +1,7 @@
 {% extends 'bootstrap/base.html' %}
 
 {% block title %}
-    {% if title %}{{ title }} - {% else %}{{ _('Welcome to Inventorpy') }}{% endif %}
+    {% if title %}{{ title }} - {% else %}{{ _('Welcome to Pyra') }}{% endif %}
 {% endblock %}
 
 {% block navbar %}
@@ -100,7 +100,7 @@
             {% endfor %}
         {% endif %}
         {% endwith %}
-        <h1> {% if title %} {{ title }} {% else %}{{ _('Welcome to Inventorpy') }}{% endif %}</h1>
+        <h1> {% if title %} {{ title }} {% else %}{{ _('Welcome to Pyra') }}{% endif %}</h1>
         {# application content needs to be provided in the app_content block #}
         {% block app_content %}{% endblock %}
     </div>

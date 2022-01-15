@@ -12,7 +12,7 @@ import os
 from sqlalchemy.ext.declarative import declarative_base
 import uuid
 from flask_login import current_user
-from app.rocketchat import InventorpyRocketChatClient
+from app.rocketchat import PyraRocketChatClient
 
 
 Base = declarative_base()
@@ -293,7 +293,7 @@ class Audit(PaginatedAPIMixin, db.Model):
                       type='new', user=user)
         db.session.add(audit)
         db.session.commit()
-        rocket = InventorpyRocketChatClient()
+        rocket = PyraRocketChatClient()
         rs = "{} added {} a {} with data {}".format(user.username, record_name, module, self.dict_to_string(original_data))
         rocket.send_message_to_rocket_chat(rs)
 
@@ -314,7 +314,7 @@ class Audit(PaginatedAPIMixin, db.Model):
                               type='update', user=user)
                 db.session.add(audit)
                 db.session.commit()
-                rocket = InventorpyRocketChatClient()
+                rocket = PyraRocketChatClient()
                 rs = "{} changed {} a {} field: {} from: {} to: {}".format(user.username, record_name, module, field, original_data[field], updated_data[field])
                 rocket.send_message_to_rocket_chat(rs)
 
