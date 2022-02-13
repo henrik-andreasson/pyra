@@ -19,6 +19,9 @@ class RegistrationForm(FlaskForm):
     password2 = PasswordField(
         _l('Repeat Password'), validators=[DataRequired(),
                                            EqualTo('password')])
+    role = SelectField(_l('Role'), choices=[('user', 'User'),
+                                            ('admin', 'PYRA Admin')])
+
     submit = SubmitField(_l('Register'))
 
     def validate_username(self, username):
@@ -80,12 +83,8 @@ class AdminSelecteUserForm(FlaskForm):
 class AdminUpdateUserForm(FlaskForm):
     username = SelectField(_l('User'), coerce=int)
     email = StringField(_l('Email'), validators=[DataRequired(), Email()])
-    manual_schedule = SelectField(_l('Manually Schedule'),
-                                  choices=[('1', 'Yes'), (0, 'No')],
-                                  coerce=int, default=0)
-    work_percent = StringField(_l('Work Percent'), default=100)
     role = SelectField(_l('Role'), choices=[('user', 'User'),
-                                            ('admin', 'Admin')])
+                                            ('admin', 'PYRA Admin')])
 
     submit = SubmitField(_l('Register'))
 

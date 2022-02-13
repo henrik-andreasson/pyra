@@ -4,15 +4,45 @@
 {% block app_content %}
 
 
+  {% if access %}
+  <table class="table table-hover">
+    <tr>      <td>{{_('Inventory id')}}</td><td>      {{ access.inventory_id() }}        </td>     </tr>
+    <tr>  <td>{{_('User')}}</td><td>                  {{ access.user.username }}        </td>    </tr>
+
+    <tr>  <td>{{_('Resource')}}</td><td>              {{ access.resource.name }}   </a>     </td>    </tr>
+
+    <tr>  <td>{{_('Start')}}</td>  <td>               {{ moment(access.start).format('YYYY-MM-DD') }}        </td>    </tr>
+
+    <tr>  <td>{{_('Stop')}}</td><td>                  {{ moment(access.stop).format('YYYY-MM-DD') }}        </td>    </tr>
+    <tr>  <td>{{_('Status')}}</td><td>                {{ access.status }}        </td>    </tr>
+    <tr>  <td>{{_('Access via Assignment')}}</td><td> {{ access.assignment.role.name }}        </td>    </tr>
+    <tr>  <td>{{_('Requested by')}}</td><td>          {{ access.assignment.requestor }}        </td>    </tr>
+    <tr>  <td>{{_('Approved by')}}</td><td>           {{ access.assignment.approver }}        </td>    </tr>
+    <tr>  <td>{{_('Implemented by')}}</td><td>        {{ access.implementer }}        </td>    </tr>
+    <tr>  <td>{{_('Implemented at')}}</td><td>        {{ moment(access.implement_ts).format('YYYY-MM-DD') }}        </td>    </tr>
+
+    <tr>  <td>{{_('Actions')}}</td>  <td>
+          <A HREF="{{url_for('main.access_edit', access=access.id)}}"> {{ _('Edit') }}</A> <br/>
+          {% if access.status == "requested" %}
+            <A HREF="{{url_for('main.access_implement', access=access.id)}}"> {{ _('Implement') }}</A> <br/>
+          {% endif %}
+          <A HREF="{{url_for('main.access_list', access=access.id)}}"> {{ _('List') }}</A>
+        </td>
+    </tr>
+  </table>
+
+  {% endif %}
+
   {% if accesses %}
   <table class="table table-hover">
     <tr>
       <td>{{_('Inventory id')}}</td>
       <td>{{_('User')}}</td>
-      <td>{{_('Role')}}</td>
+      <td>{{_('Resource')}}</td>
       <td>{{_('Start')}}</td>
       <td>{{_('Stop')}}</td>
       <td>{{_('Status')}}</td>
+      <td>{{_('Manager of resource')}}</td>
       <td>{{_('Actions')}}</td>
     </tr>
 
@@ -26,7 +56,7 @@
                 {{ a.user.username }}
         </td>
         <td>
-                {{ a.role.name }}
+               <a href="{{ url_for('main.access_view', access=a.id) }}">  {{ a.resource.name }}   </a>
         </td>
         <td>
                 {{ moment(a.start).format('YYYY-MM-DD') }}
@@ -38,12 +68,13 @@
                 {{ a.status }}
         </td>
         <td>
+                {{ a.resource.service.manager.username }}
+        </td>
+
+        <td>
           <A HREF="{{url_for('main.access_edit', access=a.id)}}"> {{ _('Edit') }}</A> <br/>
           {% if a.status == "requested" %}
-            <A HREF="{{url_for('main.access_approve', access=a.id)}}"> {{ _('Approve') }}</A> <br/>
-          {% endif %}
-          {% if a.status == "approved" %}
-          <A HREF="{{url_for('main.access_implement', access=a.id)}}"> {{ _('Implement') }}</A> <br/>
+            <A HREF="{{url_for('main.access_implement', access=a.id)}}"> {{ _('Implement') }}</A> <br/>
           {% endif %}
           <A HREF="{{url_for('main.access_list', access=a.id)}}"> {{ _('List') }}</A>
         </td>

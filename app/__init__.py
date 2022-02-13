@@ -52,6 +52,9 @@ def create_app(config_class=Config):
     from app.modules.role import bp as role_bp
     app.register_blueprint(role_bp, url_prefix='/role')
 
+    from app.modules.assignment import bp as assignment_bp
+    app.register_blueprint(assignment_bp, url_prefix='/assignment')
+
     from app.modules.resource import bp as resource_bp
     app.register_blueprint(resource_bp, url_prefix='/resource')
 
@@ -64,7 +67,7 @@ def create_app(config_class=Config):
     from app.api import bp as api_bp
     app.register_blueprint(api_bp, url_prefix='/api')
 
-    if not app.debug and not app.testing:
+    if app.config['MAIL_ENABLED'] and not app.debug and not app.testing:
         if app.config['MAIL_SERVER']:
             auth = None
             if app.config['MAIL_USERNAME'] or app.config['MAIL_PASSWORD']:
@@ -100,6 +103,3 @@ def create_app(config_class=Config):
 @babel.localeselector
 def get_locale():
     return request.accept_languages.best_match(current_app.config['LANGUAGES'])
-
-
-#from app import models

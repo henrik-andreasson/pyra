@@ -14,7 +14,7 @@
         </a>
         {% for r in role %}
           <a href="{{ url_for('main.role_edit', role=r.id) }}" class="list-group-item">
-            {{r.name}}
+            {{r.service.name}} - {{r.name}}
           </a>
         {% endfor %}
       </div>
@@ -54,6 +54,20 @@
   <div class="col-sm-4">
 
 
+        {% if pendingaccess %}
+          <div class="list-group">
+            <a href="{{ url_for('main.access_list', pending=1)}}" class="list-group-item">
+              <h4 class="list-group-item-heading">{{_('Pending Access')}}</h4>
+            </a>
+            {% for pa in pendingaccess %}
+              <a href="{{ url_for('main.access_edit', access=pa.id) }}" class="list-group-item">
+                {{pa.user.username}} - {{pa.resource.name}} - {{ moment(pa.start).format('YYYY-MM-DD') }} - {{ moment(pa.stop).format('YYYY-MM-DD') }}
+              </a>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+
         {% if access %}
           <div class="list-group">
             <a href="{{ url_for('main.access_list')}}" class="list-group-item">
@@ -61,7 +75,7 @@
             </a>
             {% for a in access %}
               <a href="{{ url_for('main.access_edit', access=a.id) }}" class="list-group-item">
-                {{a.user.username}} - {{a.role.name}} - {{ moment(a.start).format('YYYY-MM-DD') }} - {{ moment(a.stop).format('YYYY-MM-DD') }}
+                {{a.user.username}} - {{a.resource.name}} - {{ moment(a.start).format('YYYY-MM-DD') }} - {{ moment(a.stop).format('YYYY-MM-DD') }}
               </a>
             {% endfor %}
           </div>
@@ -77,7 +91,7 @@
         </a>
         {% for r in resource %}
           <a href="{{ url_for('main.resource_edit', resource=r.id) }}" class="list-group-item">
-            {{r.name}}
+            {{r.service.name}} - {{r.environment}} - {{r.name}}
           </a>
         {% endfor %}
       </div>

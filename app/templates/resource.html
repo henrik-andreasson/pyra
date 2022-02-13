@@ -58,4 +58,17 @@
 {% endif %}
 
 
+{% if resource %}
+
+<table class="table table-hover">
+    <tr> <td>{{_('Inventory id')}} </td>   <td>  {{ resource.inventory_id() }}  </td>    </tr>
+    <tr> <td>{{_('Name')}}         </td>   <td>  {{ resource.name }}            </td>    </tr>
+    <tr> <td>{{_('Service')}}      </td>   <td>  {{ resource.service.name }}    </td>    </tr>
+    <tr> <td>{{_('Environment')}}  </td>   <td>  {{ resource.external_id }}            </td>    </tr>
+    <tr> <td>{{_('External ID')}}  </td>   <td>  {{ resource.environment }}            </td>    </tr>
+    <tr> <td>{{_('Comment')}}      </td>   <td>  {{ resource.comment }}                </td>    </tr>
+</table>
+{% endif %}
+
+
 {% endblock %}

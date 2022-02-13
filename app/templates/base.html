@@ -56,11 +56,11 @@
          </ul>
      </li>
      <li class="dropdown">
-         <a class="dropdown-toggle" data-toggle="dropdown" href="#">Access
+         <a class="dropdown-toggle" data-toggle="dropdown" href="#">Assignment
          <span class="caret"></span></a>
          <ul class="dropdown-menu">
-           <li class="nav-item"><a href="{{ url_for('main.access_list') }}">{{ _('List Access') }}</a></li>
-           <li class="nav-item"><a href="{{ url_for('main.access_add') }}">{{ _('Add Access') }}</a></li>
+           <li class="nav-item"><a href="{{ url_for('main.assignment_list') }}">{{ _('List Assignment') }}</a></li>
+           <li class="nav-item"><a href="{{ url_for('main.assignment_add') }}">{{ _('Add Assignment') }}</a></li>
          </ul>
      </li>
 
@@ -70,6 +70,14 @@
          <ul class="dropdown-menu">
            <li class="nav-item"><a href="{{ url_for('main.resource_list') }}">{{ _('Resource List') }}</a></li>
            <li class="nav-item"><a href="{{ url_for('main.resource_add') }}">{{ _('Resource Add') }}</a></li>
+         </ul>
+     </li>
+     <li class="dropdown">
+         <a class="dropdown-toggle" data-toggle="dropdown" href="#">Access
+         <span class="caret"></span></a>
+         <ul class="dropdown-menu">
+           <li class="nav-item"><a href="{{ url_for('main.access_list') }}">{{ _('List Access') }}</a></li>
+           <li class="nav-item"><a href="{{ url_for('main.access_add') }}">{{ _('Add Access') }}</a></li>
          </ul>
      </li>
 

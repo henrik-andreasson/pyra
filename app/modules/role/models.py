@@ -1,6 +1,5 @@
 from app import db
 from sqlalchemy.ext.declarative import declarative_base
-from app.modules.resource.models import Resource
 
 
 Base = declarative_base()

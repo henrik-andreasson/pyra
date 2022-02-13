@@ -7,7 +7,7 @@ from app import db
 from app.auth import bp
 from app.auth.forms import LoginForm, RegistrationForm, \
     ResetPasswordRequestForm, ResetPasswordForm, ChangePasswordForm, \
-    AdminChangePasswordForm, AdminUpdateUserForm
+    AdminChangePasswordForm, AdminUpdateUserForm, AdminSelecteUserForm
 from app.main.models import User
 from app.auth.email import send_password_reset_email
 from app.main.models import Audit
@@ -52,7 +52,8 @@ def register():
         db.session.add(user)
         db.session.commit()
 
-        Audit().auditlog_new_post('user', original_data=user.to_dict(), record_name=user.username)
+        Audit().auditlog_new_post(
+            'user', original_data=user.to_dict(), record_name=user.username)
         flash(_('Congratulations, you are now a registered user!'))
         return redirect(url_for('auth.login'))
     return render_template('auth/register.html', title=_('Register'),
@@ -88,7 +89,8 @@ def reset_password(token):
     if form.validate_on_submit():
         user.set_password(form.password.data)
         db.session.commit()
-        Audit().auditlog_new_post('user', original_data=original_data, updated_data=user.to_dict(), record_name=user.username)
+        Audit().auditlog_new_post('user', original_data=original_data,
+                                  updated_data=user.to_dict(), record_name=user.username)
 
         flash(_('Your password has been reset.'))
         return redirect(url_for('auth.login'))
@@ -107,7 +109,8 @@ def change_password():
         db.session.add(user)
         db.session.commit()
 
-        Audit().auditlog_new_post('user', original_data=original_data, updated_data=user.to_dict(), record_name=user.username)
+        Audit().auditlog_new_post('user', original_data=original_data,
+                                  updated_data=user.to_dict(), record_name=user.username)
 
         flash(_('Password changed'))
         return redirect(url_for('main.index'))
@@ -162,15 +165,12 @@ def user_save():
 
     if request.method == 'POST' and form.validate_on_submit():
         user.email = form.email.data
-        user.work_percent = form.work_percent.data
         user.role = form.role.data
         db.session.commit()
         flash(_('User Updated'))
         return redirect(url_for('main.index'))
     else:
         form.email.data = user.email
-        form.manual_schedule.data = user.manual_schedule
-        form.work_percent.data = user.work_percent
         form.role.data = user.role
         return render_template('auth/change_password.html', form=form)
 

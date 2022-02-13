@@ -18,8 +18,10 @@ from app.rocketchat import PyraRocketChatClient
 Base = declarative_base()
 
 service_user = db.Table('service_user',
-                        db.Column('service_id', db.Integer, db.ForeignKey('service.id')),
-                        db.Column('user_id', db.Integer, db.ForeignKey('user.id'))
+                        db.Column('service_id', db.Integer,
+                                  db.ForeignKey('service.id')),
+                        db.Column('user_id', db.Integer,
+                                  db.ForeignKey('user.id'))
                         )
 
 
@@ -90,6 +92,7 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):
     api_key = db.Column(db.String(32), index=True, unique=True)
     token = db.Column(db.String(32), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
+    role = db.Column(db.String(140))
     active = db.Column(db.Integer)
 
     def __repr__(self):
@@ -97,6 +100,10 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
+
+    def set_role(self, role):
+        if role in ['admin', 'user']:
+            self.role = role
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
@@ -284,7 +291,8 @@ class Audit(PaginatedAPIMixin, db.Model):
     def auditlog_new_post(self, module, original_data, record_name):
         ts = datetime.utcnow()
         if hasattr(g, 'current_user'):
-            user = User.query.filter_by(username=g.current_user.username).first()
+            user = User.query.filter_by(
+                username=g.current_user.username).first()
         else:
             user = User.query.filter_by(username=current_user.username).first()
         audit = Audit(module=module, module_id=original_data['id'],
@@ -294,13 +302,15 @@ class Audit(PaginatedAPIMixin, db.Model):
         db.session.add(audit)
         db.session.commit()
         rocket = PyraRocketChatClient()
-        rs = "{} added {} a {} with data {}".format(user.username, record_name, module, self.dict_to_string(original_data))
+        rs = "{} added {} a {} with data {}".format(
+            user.username, record_name, module, self.dict_to_string(original_data))
         rocket.send_message_to_rocket_chat(rs)
 
     def auditlog_update_post(self, module, original_data, updated_data, record_name):
         ts = datetime.utcnow()
         if hasattr(g, 'current_user'):
-            user = User.query.filter_by(username=g.current_user.username).first()
+            user = User.query.filter_by(
+                username=g.current_user.username).first()
         else:
             user = User.query.filter_by(username=current_user.username).first()
 
@@ -315,13 +325,15 @@ class Audit(PaginatedAPIMixin, db.Model):
                 db.session.add(audit)
                 db.session.commit()
                 rocket = PyraRocketChatClient()
-                rs = "{} changed {} a {} field: {} from: {} to: {}".format(user.username, record_name, module, field, original_data[field], updated_data[field])
+                rs = "{} changed {} a {} field: {} from: {} to: {}".format(
+                    user.username, record_name, module, field, original_data[field], updated_data[field])
                 rocket.send_message_to_rocket_chat(rs)
 
     def auditlog_delete_post(self, module, data, record_name):
         ts = datetime.utcnow()
         if hasattr(g, 'current_user'):
-            user = User.query.filter_by(username=g.current_user.username).first()
+            user = User.query.filter_by(
+                username=g.current_user.username).first()
         else:
             user = User.query.filter_by(username=current_user.username).first()
 

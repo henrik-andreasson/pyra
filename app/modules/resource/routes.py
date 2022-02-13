@@ -38,7 +38,8 @@ def resource_add():
         db.session.add(resource)
         db.session.commit()
 
-        Audit().auditlog_new_post('resource', original_data=resource.to_dict(), record_name=resource.name)
+        Audit().auditlog_new_post('resource',
+                                  original_data=resource.to_dict(), record_name=resource.name)
         flash(_('New resource is now posted!'))
 
         return redirect(url_for('main.index'))
@@ -75,14 +76,21 @@ def resource_edit():
     form = ResourceForm(formdata=request.form, obj=resource)
 
     if request.method == 'POST' and form.validate_on_submit():
+        service = Service.query.get(form.service.data)
+        if service is None:
+            flash('Service is required')
+            return redirect(request.referrer)
 
         resource.name = form.name.data
         resource.comment = form.comment.data
         resource.environment = form.environment.data
         resource.external_id = form.external_id.data
+        resource.service = service
+
         db.session.commit()
 
-        Audit().auditlog_update_post('resource', original_data=original_data, updated_data=resource.to_dict(), record_name=resource.name)
+        Audit().auditlog_update_post('resource', original_data=original_data,
+                                     updated_data=resource.to_dict(), record_name=resource.name)
         flash(_('Your changes have been saved.'))
 
         return redirect(url_for('main.index'))
@@ -92,6 +100,7 @@ def resource_edit():
         form.name.data = resource.name
         form.comment.data = resource.comment
         form.external_id.data = resource.external_id
+        form.service.data = resource.service_id
         return render_template('resource.html', title=_('Edit Resource'),
                                form=form)
 
@@ -122,6 +131,22 @@ def resource_list():
                            prev_url=prev_url)
 
 
+@bp.route('/resource/view/', methods=['GET', 'POST'])
+@login_required
+def resource_view():
+
+    resource_input = request.args.get('resource')
+    resource = Resource.query.filter_by(name=resource_input).first()
+    if resource is None:
+        resource = Resource.query.filter_by(id=resource_input).first()
+        if resource is None:
+            flash(_('resource is not found!'))
+            return redirect(url_for('main.index'))
+
+    return render_template('resource.html', title=_('Resource'),
+                           resource=resource)
+
+
 @bp.route('/resource/delete/', methods=['GET', 'POST'])
 @login_required
 def resource_delete():
@@ -138,6 +163,7 @@ def resource_delete():
     db.session.delete(resource)
     db.session.commit()
 
-    Audit().auditlog_delete_post('resource', data=resource.to_dict(), record_name=resource.name)
+    Audit().auditlog_delete_post('resource',
+                                 data=resource.to_dict(), record_name=resource.name)
 
     return redirect(url_for('main.index'))

@@ -19,25 +19,26 @@ def before_request():
         db.session.commit()
     g.locale = str(get_locale())
 
-  
+
 @bp.route('/', methods=['GET', 'POST'])
 @login_required
-def index():
+def index(): 
     role = Role.query.order_by(Role.name).limit(10)
     access = Access.query.order_by(Access.id).limit(10)
     resource = Resource.query.order_by(Resource.name).limit(10)
     user = User.query.order_by(User.username).limit(10)
     location = Location.query.order_by(Location.place).limit(10)
     service = Service.query.order_by(Service.name).limit(10)
-
+    pendingaccess = Access.query.filter_by(status="requested").limit(10)
     return render_template('index.html', title=_('Explore'),
                            location=location,
                            service=service,
                            user=user,
                            role=role,
                            access=access,
-                           resource=resource
-    )
+                           resource=resource,
+                           pendingaccess=pendingaccess
+                           )
 
 
 @bp.route('/service/add', methods=['GET', 'POST'])
@@ -59,7 +60,8 @@ def service_add():
         db.session.add(service)
         db.session.commit()
 
-        Audit().auditlog_new_post('service', original_data=service.to_dict(), record_name=service.name)
+        Audit().auditlog_new_post(
+            'service', original_data=service.to_dict(), record_name=service.name)
         flash(_('Service have been saved.'))
         return redirect(url_for('main.service_list'))
 
@@ -96,7 +98,8 @@ def service_edit():
 
         db.session.commit()
 
-        Audit().auditlog_update_post('service', original_data=original_data, updated_data=service.to_dict(), record_name=service.name)
+        Audit().auditlog_update_post('service', original_data=original_data,
+                                     updated_data=service.to_dict(), record_name=service.name)
 
         flash(_('Your changes have been saved.'))
         return redirect(url_for('main.service_list'))
@@ -139,8 +142,10 @@ def service_list():
     page = request.args.get('page', 1, type=int)
     services = Service.query.order_by(Service.updated.desc()).paginate(
         page, current_app.config['POSTS_PER_PAGE'], False)
-    next_url = url_for('main.service_list', page=services.next_num) if services.has_next else None
-    prev_url = url_for('main.service_list', page=services.prev_num) if services.has_prev else None
+    next_url = url_for('main.service_list',
+                       page=services.next_num) if services.has_next else None
+    prev_url = url_for('main.service_list',
+                       page=services.prev_num) if services.has_prev else None
     return render_template('services.html', services=services.items,
                            next_url=next_url, prev_url=prev_url)
 
@@ -209,7 +214,8 @@ def location_add():
         db.session.add(location)
         db.session.commit()
 
-        Audit().auditlog_new_post('location', original_data=location.to_dict(), record_name=location.longName())
+        Audit().auditlog_new_post('location', original_data=location.to_dict(),
+                                  record_name=location.longName())
         flash(_('Location have been saved.'))
         return redirect(url_for('main.location_list'))
 
@@ -239,7 +245,8 @@ def location_edit():
         location.type = form.type.data
         db.session.commit()
 
-        Audit().auditlog_update_post('location', original_data=original_data, updated_data=location.to_dict(), record_name=location.longName())
+        Audit().auditlog_update_post('location', original_data=original_data,
+                                     updated_data=location.to_dict(), record_name=location.longName())
         flash(_('Your changes have been saved.'))
 
         return redirect(url_for('main.location_list'))
@@ -255,8 +262,10 @@ def location_list():
     page = request.args.get('page', 1, type=int)
     locations = Location.query.order_by(Location.area.desc()).paginate(
         page, current_app.config['POSTS_PER_PAGE'], False)
-    next_url = url_for('main.location_list', page=locations.next_num) if locations.has_next else None
-    prev_url = url_for('main.location_list', page=locations.prev_num) if locations.has_prev else None
+    next_url = url_for('main.location_list',
+                       page=locations.next_num) if locations.has_next else None
+    prev_url = url_for('main.location_list',
+                       page=locations.prev_num) if locations.has_prev else None
     return render_template('location.html', locations=locations.items,
                            next_url=next_url, prev_url=prev_url)
 
@@ -289,7 +298,9 @@ def logs_list():
         logs = Audit.query.order_by(Audit.timestamp.desc()).paginate(
             page, current_app.config['POSTS_PER_PAGE'], False)
 
-    next_url = url_for('main.logs_list', page=logs.next_num) if logs.has_next else None
-    prev_url = url_for('main.logs_list', page=logs.prev_num) if logs.has_prev else None
+    next_url = url_for(
+        'main.logs_list', page=logs.next_num) if logs.has_next else None
+    prev_url = url_for(
+        'main.logs_list', page=logs.prev_num) if logs.has_prev else None
     return render_template('logs.html', logs=logs.items,
                            next_url=next_url, prev_url=prev_url)

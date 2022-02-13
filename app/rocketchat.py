@@ -9,7 +9,9 @@ class PyraRocketChatClient(object):
         if channel is None:
             channel = current_app.config['ROCKET_CHANNEL']
 
-        if current_app.config['ROCKET_ENABLED']:
+        print("rocket sending is: %s" %
+              current_app.config['ROCKET_ENABLED'])
+        if current_app.config['ROCKET_ENABLED'] == 1:
             print("sending rocket message {} to {}".format(message, channel))
             rocket = RocketChat(current_app.config['ROCKET_USER'],
                                 current_app.config['ROCKET_PASS'],
